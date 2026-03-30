@@ -19,6 +19,8 @@ public class Grafo {
 
     public void adicionarAresta(Aresta aresta) {
         arestas.add(aresta);
+        // Adiciona a aresta inversa para que o grafo seja não direcionado
+        arestas.add(new Aresta(aresta.getDestino(), aresta.getOrigem(), (int) aresta.getDistancia()));
     }
 
     public List<Cidade> getCidades() {

@@ -4,9 +4,10 @@ public class Aresta {
 
     private Cidade origem;
     private Cidade destino;
-    private double distancia;
+    private int distancia;
+     
 
-    public Aresta(Cidade origem, Cidade destino, double distancia) {
+    public Aresta(Cidade origem, Cidade destino, int distancia) {
         this.origem = origem;
         this.destino = destino;
         this.distancia = distancia;
@@ -32,7 +33,7 @@ public class Aresta {
         return distancia;
     }
 
-    public void setDistancia(double distancia) {
+    public void setDistancia(int distancia) {
         this.distancia = distancia;
     }
 }

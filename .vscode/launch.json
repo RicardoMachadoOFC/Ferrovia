@@ -3,6 +3,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "TesteAstar",
+      "request": "launch",
+      "mainClass": "net.javaguides.springboot.controller.TesteAstar",
+      "projectName": "Ferrovia"
+    },
+    {
+      "type": "java",
       "name": "Executar FerroviaApp",
       "request": "launch",
       "mainClass": "net.javaguides.FerroviaApp",

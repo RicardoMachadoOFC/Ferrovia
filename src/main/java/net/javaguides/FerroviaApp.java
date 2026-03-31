@@ -10,5 +10,6 @@ public class FerroviaApp {
         Grafo grafo = grafoController.criarGrafo();
         KruskalController kruskalController = new KruskalController();
         kruskalController.ordenarArestas(grafo);
+
     }
 }

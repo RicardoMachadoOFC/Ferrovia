@@ -2,30 +2,57 @@ package net.javaguides.springboot.controller;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
 import net.javaguides.springboot.model.Aresta;
+import net.javaguides.springboot.model.Cidade;
 import net.javaguides.springboot.model.Grafo;
 
 public class KruskalController {
 
-    public List<Aresta> gerarArvoreMinima(Grafo grafo){
+    private List<Aresta> ordenarArestas(Grafo grafo) {
+        List<Aresta> arestasUnicas = new ArrayList<>();
+        Set<String> chaves = new HashSet<>();
+        for (Aresta aresta : grafo.getArestas()) {
+            String origem = aresta.getOrigem().getNome();
+            String destino = aresta.getDestino().getNome();
 
-        List<Aresta> resultado = new ArrayList<>();
+            String chave;
+            if (origem.compareTo(destino) < 0) {
+                chave = origem + "-" + destino;
+            } else {
+                chave = destino + "-" + origem;
+            }
 
-        if (grafo == null) {
-            return resultado;
+            if (!chaves.contains(chave)) {
+                chaves.add(chave);
+                arestasUnicas.add(aresta);
+            }
         }
 
-        List<Aresta> arestas = grafo.getArestas();
+        arestasUnicas.sort(Comparator.comparingDouble(Aresta::getDistancia));
+        return arestasUnicas;
+    }
 
-        arestas.sort(new Comparator<Aresta>() {
-            @Override
-            public int compare(Aresta a1, Aresta a2) {
-                return Double.compare(a1.getDistancia(), a2.getDistancia());
+    public List<Aresta> kruskal(Grafo grafo) {
+        ArrayList<Aresta> agm = new ArrayList<>();
+        ArrayList<Aresta> arestasOrdenadas = new ArrayList<>(ordenarArestas(grafo));
+
+        UnionFindController uf = new UnionFindController(grafo.getCidades());
+
+        for (Aresta aresta : arestasOrdenadas){
+            Cidade origem = aresta.getOrigem();
+            Cidade destino = aresta.getDestino();
+            if(!uf.find(origem).equals(uf.find(destino))){ 
+                agm.add(aresta);
+                uf.union(origem, destino);
+            } 
+
+            if(agm.size() == grafo.getCidades().size() - 1){
+                break;
             }
-        });
-
-        return resultado;
+        }
+        return agm;
     }
 }

@@ -36,4 +36,13 @@ public class Aresta {
     public void setDistancia(int distancia) {
         this.distancia = distancia;
     }
+
+    @Override
+    public String toString() {
+        return "Aresta{" +
+                "origem=" + origem +
+                ", destino=" + destino +
+                ", distancia=" + distancia +
+                '}';
+    }
 }

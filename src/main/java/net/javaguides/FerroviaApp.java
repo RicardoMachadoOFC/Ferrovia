@@ -25,17 +25,12 @@ public class FerroviaApp {
 
         FerroviaController ferroviaController = new FerroviaController();
         ArrayList<Ferrovia> ferrovias = ferroviaController.criarFerrovias(arvoreGeradoraMinima);
-        for(int i = 0; i < ferrovias.size(); i++){
+        for (int i = 0; i < ferrovias.size(); i++) {
             System.out.println(ferrovias.get(i).getAresta().toString());
         }
-       System.out.println("Custo total da construção das ferrovias: R$" + ferroviaController.calcularCustoTotal(ferrovias));
+        System.out.println(
+                "Custo total da construção das ferrovias: R$" + ferroviaController.calcularCustoTotal(ferrovias));
 
-       //Teste Genetico
-        //ArrayList<Aresta> arestas = new ArrayList<>(grafo.getArestas());
-        //AlgoritimoGenericoController ag = new AlgoritimoGenericoController();
-       // ag.otimizarFerrovias(arestas, 1000000);
-
-        System.out.println("Custo total da construção das ferrovias: R$" + ferroviaController.calcularCustoTotal(ferrovias));
 
         AStarController aStar = new AStarController();
         Cidade origem = new Cidade("Recife");

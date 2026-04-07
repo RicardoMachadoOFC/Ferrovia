@@ -18,6 +18,10 @@ public class AlgoritimoGenericoController {
         List<Individuo> populacao = criarPopulacao(3, possiveis.size());
 
         for (Individuo ind : populacao) {
+
+            double fitness = calcularFitness(ind, possiveis, orcamento);
+            System.out.println("Fitness: " + fitness);
+
             System.out.println("Genes: " + java.util.Arrays.toString(ind.genes));
 
             List<Aresta> selecionadas = obterArestasSelecionadas(ind, possiveis);
@@ -30,7 +34,6 @@ public class AlgoritimoGenericoController {
         // seleção
         // crossover
         // mutação
-        // função fitness
 
         return melhorSolucao;
     }
@@ -43,7 +46,7 @@ public class AlgoritimoGenericoController {
 
         // Vai preencher o array de genes com valores aleatorios entre 0 ou 1
         for (int i = 0; i < tamanho; i++) {
-            ind.genes[i] = Math.random() < 0.5 ? 1 : 0; // se for menor que 0,5 vai ser 1 maior 0
+            ind.genes[i] = Math.random() < 0.03 ? 1 : 0;
         }
 
         return ind;
@@ -73,6 +76,41 @@ public class AlgoritimoGenericoController {
         }
 
         return selecionadas;
+    }
+
+    public double calcularFitness(Individuo ind, List<Aresta> possiveis, double orcamento) {
+
+        double custoConstrucao = 0;
+        double economia = 0;
+
+        for (int i = 0; i < ind.genes.length; i++) {
+
+            Aresta a = possiveis.get(i);
+            double distancia = a.getDistancia();
+
+            if (ind.genes[i] == 1) {
+                // ferrovia contruida
+
+                // custo de contrução
+                custoConstrucao += distancia * 2000000;
+
+                // economia no transporte
+                double custoRodovia = distancia * 5.0;
+                double custoFerrovia = distancia * 1.2;
+
+                economia += (custoRodovia - custoFerrovia);
+
+            }
+        }
+
+        // respeita orçlamento
+        if (custoConstrucao > orcamento) {
+            return Double.NEGATIVE_INFINITY;
+        }
+
+        // fitness final
+        return economia - custoConstrucao;
+
     }
 
 }

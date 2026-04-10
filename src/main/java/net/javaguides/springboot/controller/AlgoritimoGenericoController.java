@@ -1,9 +1,12 @@
 package net.javaguides.springboot.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import net.javaguides.springboot.model.Aresta;
 import net.javaguides.springboot.model.Ferrovia;
+import java.util.Set;
+import java.util.HashSet;
 
 public class AlgoritimoGenericoController {
 
@@ -15,6 +18,11 @@ public class AlgoritimoGenericoController {
     public List<Ferrovia> otimizarFerrovias(List<Aresta> possiveis, double orcamento) {
 
         List<Individuo> populacao = criarPopulacao(10, possiveis.size());
+
+         //cerebro do algoritimo
+        int geracoes = 50;
+
+        for (int g = 0; g < geracoes; g++) {
 
         for (Individuo ind : populacao) {
 
@@ -46,12 +54,23 @@ public class AlgoritimoGenericoController {
             novaPopulacao.add(filho);
 
         }
+    
 
         populacao = novaPopulacao;
 
-        List<Ferrovia> melhorSolucao = new ArrayList<>();
+         if (g % 10 == 0) {
+        System.out.println("Geração " + g + " concluída");
+}
 
-        return melhorSolucao;
+        }
+
+        ordenarPopulacao(populacao);
+        Individuo melhor = populacao.get(0);
+
+        List<Aresta> selecionadas = obterArestasSelecionadas(melhor, possiveis);
+        FerroviaController ferroviaController = new FerroviaController();
+        return ferroviaController.criarFerrovias(new ArrayList<>(selecionadas));
+        
     }
 
     // cada individuo será uma solução
@@ -124,10 +143,25 @@ public class AlgoritimoGenericoController {
     // Pega os individuos e trasforma nas ferrovias que serão contruidas
     public List<Aresta> obterArestasSelecionadas(Individuo ind, List<Aresta> possiveis) {
         List<Aresta> selecionadas = new ArrayList<>();
+        Set<String> jaAdicionadas = new HashSet<>();
 
         for (int i = 0; i < ind.genes.length; i++) {
+
             if (ind.genes[i] == 1) {
-                selecionadas.add(possiveis.get(i));
+
+            Aresta a = possiveis.get(i);
+
+            String origem = a.getOrigem().getNome();
+            String destino = a.getDestino().getNome();
+
+            String chave = origem.compareTo(destino) < 0
+                    ? origem + "-" + destino
+                    : destino + "-" + origem;
+
+            if (!jaAdicionadas.contains(chave)){
+                jaAdicionadas.add(chave);
+                selecionadas.add(a);
+            }
 
             }
         }

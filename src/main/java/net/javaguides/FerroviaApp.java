@@ -40,6 +40,10 @@ public class FerroviaApp {
 
         System.out.println("Rota encontrada: " + rota);
         System.out.println("Custo total: R$ " + aStar.calcularCusto(rota, grafo));
+
+      
+        }
     }
 
-}
+    
+

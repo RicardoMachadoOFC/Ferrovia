@@ -10,18 +10,17 @@ public class AlgoritimoGenericoController {
     class Individuo {
         int[] genes;
         double fitness;
-
     }
 
     public List<Ferrovia> otimizarFerrovias(List<Aresta> possiveis, double orcamento) {
 
-        List<Individuo> populacao = criarPopulacao(3, possiveis.size());
+        List<Individuo> populacao = criarPopulacao(10, possiveis.size());
 
         for (Individuo ind : populacao) {
 
-            double fitness = calcularFitness(ind, possiveis, orcamento);
-            System.out.println("Fitness: " + fitness);
+            ind.fitness = calcularFitness(ind, possiveis, orcamento);
 
+            System.out.println("Fitness: " + ind.fitness);
             System.out.println("Genes: " + java.util.Arrays.toString(ind.genes));
 
             List<Aresta> selecionadas = obterArestasSelecionadas(ind, possiveis);
@@ -29,11 +28,28 @@ public class AlgoritimoGenericoController {
             System.out.println("Selecionadas: " + selecionadas.size());
         }
 
-        List<Ferrovia> melhorSolucao = new ArrayList<>();
+        // Seleção
+        List<Individuo> melhores = selecionarMelhores(populacao);
 
-        // seleção
-        // crossover
-        // mutação
+        // Nova população crossover + mutação
+        List<Individuo> novaPopulacao = new ArrayList<>();
+
+        while (novaPopulacao.size() < populacao.size()) {
+
+            Individuo pai1 = melhores.get((int) (Math.random() * melhores.size()));
+            Individuo pai2 = melhores.get((int) (Math.random() * melhores.size()));
+
+            Individuo filho = crossover(pai1, pai2);
+
+            mutar(filho);
+
+            novaPopulacao.add(filho);
+
+        }
+
+        populacao = novaPopulacao;
+
+        List<Ferrovia> melhorSolucao = new ArrayList<>();
 
         return melhorSolucao;
     }
@@ -52,6 +68,42 @@ public class AlgoritimoGenericoController {
         return ind;
     }
 
+    public List<Individuo> selecionarMelhores(List<Individuo> populacao) {
+        ordenarPopulacao(populacao);
+
+        // pega metade melhor
+        return new ArrayList<>(populacao.subList(0, Math.max(1, populacao.size() / 2)));
+    }
+
+    public Individuo crossover(Individuo pai1, Individuo pai2){
+        Individuo filho = new Individuo();
+        filho.genes = new int [pai1.genes.length];
+
+        int pontoCorte = (int) (Math.random() * pai1.genes.length);
+
+        for (int i = 0; i < pai1.genes.length; i++) {
+            if (i < pontoCorte) {
+                filho.genes[i] = pai1.genes[i];
+            }else{
+                filho.genes[i] = pai2.genes[i];
+            }
+        }
+
+        return filho;
+        
+    }
+
+    public void mutar(Individuo ind) {
+
+        double taxaMutacao = 0.05; //5%
+
+        for (int i = 0; i < ind.genes.length; i++){
+            if (Math.random() < taxaMutacao){
+                ind.genes[i] = (ind.genes[i] == 1) ? 0 : 1;
+            }
+        }
+    }
+
     // população é o conjunto de soluções
     // Serve para criar um conjunto (população) de combinações de ferrovias
     // possiveis
@@ -61,7 +113,12 @@ public class AlgoritimoGenericoController {
         for (int i = 0; i < tamanhoPop; i++) {
             pop.add(criarIndividuo(tamanhoGenes));
         }
+
         return pop;
+    }
+
+    public void ordenarPopulacao(List<Individuo> populacao) {
+        populacao.sort((a, b) -> Double.compare(b.fitness, a.fitness));
     }
 
     // Pega os individuos e trasforma nas ferrovias que serão contruidas
@@ -103,7 +160,7 @@ public class AlgoritimoGenericoController {
             }
         }
 
-        // respeita orçlamento
+        // respeita orçamento
         if (custoConstrucao > orcamento) {
             return Double.NEGATIVE_INFINITY;
         }

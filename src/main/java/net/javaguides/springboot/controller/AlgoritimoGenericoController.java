@@ -190,7 +190,6 @@ public class AlgoritimoGenericoController {
 
         //custo de contrução
         for (int i = 0; i < ind.genes.length; i++) {
-
             if (ind.genes[i] == 1) { // ferrovia contruida
                 custoConstrucao += possiveis.get(i).getDistancia() * 2000000;
             }
@@ -199,23 +198,29 @@ public class AlgoritimoGenericoController {
         //penalização de orçamento
         if (custoConstrucao > orcamento) {
             double excesso = custoConstrucao - orcamento;
-            return -(excesso * 1000);
-            
+            return -(excesso * 1000);      
         }
 
-        double custoTotalTransporte = 0
+        List<Aresta> ferrovias = obterArestasSelecionadas(ind, possiveis);
+
+        double custoTotalTransporte = 0;
 
         for (RotaCarga rota : rotas) {
 
             List<Cidade> caminho = aStar.buscarRota(grafo, rota.getOrigem(), rota.getDestino());
 
-            double custo = aStar.calcularCusto(caminho, grafo);
+            double custo = aStar.calcularCusto(caminho, grafo); 
+            
+            //simulação provisoria, até o A* estar adaptado
+            if (!ferrovias.isEmpty()) {
+                custo *= (1 - (ferrovias.size() * 0.01));
+            }
 
-            custoTotalTransporte += custo *rota.getQuantidade();
+            custoTotalTransporte += custo * rota.getQuantidade();
         }
 
         //retorna negativo
-        return -custoTotalTransporte;    
+        return -(custoTotalTransporte + custoConstrucao);    
   
     }
 

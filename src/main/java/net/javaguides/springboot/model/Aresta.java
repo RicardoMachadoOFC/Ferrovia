@@ -5,12 +5,14 @@ public class Aresta {
     private Cidade origem;
     private Cidade destino;
     private int distancia;
+    private boolean ferrovia;
      
 
     public Aresta(Cidade origem, Cidade destino, int distancia) {
         this.origem = origem;
         this.destino = destino;
         this.distancia = distancia;
+        this.ferrovia = false;
     }
 
     public Cidade getOrigem() {
@@ -35,6 +37,14 @@ public class Aresta {
 
     public void setDistancia(int distancia) {
         this.distancia = distancia;
+    }
+
+    public boolean isFerrovia() {
+        return ferrovia;
+    }
+
+    public void setFerrovia(boolean ferrovia) {
+        this.ferrovia = ferrovia;
     }
 
     @Override

@@ -56,6 +56,7 @@ public class KruskalController {
             Cidade origem = aresta.getOrigem();
             Cidade destino = aresta.getDestino();
             if(!uf.find(origem).equals(uf.find(destino))){ 
+                aresta.setFerrovia(true);
                 agm.add(aresta);
                 uf.union(origem, destino);
             } 

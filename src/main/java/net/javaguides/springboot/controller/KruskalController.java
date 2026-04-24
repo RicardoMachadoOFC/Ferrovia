@@ -35,6 +35,17 @@ public class KruskalController {
         return arestasUnicas;
     }
 
+    private String gerarChave(Aresta aresta) {
+            String origem = aresta.getOrigem().getNome();
+            String destino = aresta.getDestino().getNome();
+
+            if (origem.compareTo(destino) < 0) {
+                return origem + "-" + destino;
+            } else {
+                return destino + "-" + origem;
+            }
+    }
+
     public List<Aresta> kruskal(Grafo grafo) {
         ArrayList<Aresta> agm = new ArrayList<>();
         ArrayList<Aresta> arestasOrdenadas = new ArrayList<>(ordenarArestas(grafo));
@@ -54,5 +65,24 @@ public class KruskalController {
             }
         }
         return agm;
+    }
+
+    public List<Aresta> obterArestasNaoUsadas(Grafo grafo, List<Aresta> arestasUsadas) {
+        List<Aresta> arestasNaoUsadas = new ArrayList<>();
+        List<Aresta> todasArestas = ordenarArestas(grafo);
+
+        Set<String> chavesUsadas = new HashSet<>();
+        for (Aresta aresta : arestasUsadas) {
+            chavesUsadas.add(gerarChave(aresta));
+        }
+
+        for (Aresta aresta : todasArestas) {
+            String chave = gerarChave(aresta);
+            if (!chavesUsadas.contains(chave)) {
+                arestasNaoUsadas.add(aresta);
+            }
+        }
+
+        return arestasNaoUsadas;
     }
 }

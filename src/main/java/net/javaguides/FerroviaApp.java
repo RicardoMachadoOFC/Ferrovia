@@ -6,10 +6,12 @@ import net.javaguides.springboot.controller.AStarController;
 import net.javaguides.springboot.controller.FerroviaController;
 import net.javaguides.springboot.controller.GrafoController;
 import net.javaguides.springboot.controller.KruskalController;
+import net.javaguides.springboot.controller.RodoviaController;
 import net.javaguides.springboot.model.Aresta;
 import net.javaguides.springboot.model.Cidade;
 import net.javaguides.springboot.model.Ferrovia;
 import net.javaguides.springboot.model.Grafo;
+import net.javaguides.springboot.model.Rodovia;
 
 public class FerroviaApp {
 
@@ -44,29 +46,48 @@ public class FerroviaApp {
         ArrayList<Aresta> agm = new ArrayList<>(kruskalController.kruskal(grafo));
         FerroviaController ferroviaController = new FerroviaController();
         ArrayList<Ferrovia> ferrovias = ferroviaController.criarFerrovias(agm);
-        for(int i = 0; i < ferrovias.size(); i++){
-            System.out.println(ferrovias.get(i).getAresta().toString());
-        }
-        System.out.println("Custo total da construção das ferrovias: R$" + ferroviaController.calcularCustoTotal(ferrovias));
+        ArrayList<Aresta> arestasNaoUsadas = new ArrayList<>(kruskalController.obterArestasNaoUsadas(grafo, agm));
 
-        int total = 0;
+        RodoviaController rodoviaController = new RodoviaController();
+        ArrayList<Rodovia> rodovias = rodoviaController.criarRodovias(arestasNaoUsadas);
+
+        System.out.println("\n===== FERROVIAS (AGM - KRUSKAL) =====");
+        double totalFerrovias = 0;
         int contador = 1;
 
-        System.out.println("\n===== KRUSKAL =====");
-
-        for (Aresta aresta : agm) {
+        for (Ferrovia ferrovia : ferrovias) {
+            Aresta aresta = ferrovia.getAresta();
             System.out.println(
-                    contador + " - " +
-                            aresta.getOrigem().getNome() + " -> " +
-                            aresta.getDestino().getNome() + " | " +
-                            aresta.getDistancia() + " km");
+                contador + " - " +
+                aresta.getOrigem().getNome() + " <-> " +
+                aresta.getDestino().getNome() + " | " +
+                aresta.getDistancia() + " km"
+            );
+            totalFerrovias += aresta.getDistancia();
+            contador++;
+        }
+        System.out.println("Total de conexões ferroviárias: " + ferrovias.size());
+        System.out.println("Distância total das ferrovias: " + totalFerrovias + " km");
+        System.out.println("Custo total da construção das ferrovias: R$" + ferroviaController.calcularCustoTotal(ferrovias));
 
-            total += aresta.getDistancia();
+        System.out.println("\n===== RODOVIAS (ARESTAS NÃO USADAS) =====");
+        double totalRodovias = 0;
+        contador = 1;
+
+        for (Rodovia rodovia : rodovias) {
+            Aresta aresta = rodovia.getAresta();
+            System.out.println(
+                contador + " - " +
+                aresta.getOrigem().getNome() + " <-> " +
+                aresta.getDestino().getNome() + " | " +
+                aresta.getDistancia() + " km"
+            );
+            totalRodovias += aresta.getDistancia();
             contador++;
         }
 
-        System.out.println("Total de conexões: " + agm.size());
-        System.out.println("Distância total: " + total + " km");
+        System.out.println("Total de conexões rodoviárias: " + rodovias.size());
+        System.out.println("Distância total das rodovias: " + totalRodovias + " km");
     }
 
     public static void executarAStar(Grafo grafo, Scanner scanner) {

@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import net.javaguides.springboot.controller.AStarController;
+import net.javaguides.springboot.controller.AStarFerroviaController;
 import net.javaguides.springboot.controller.FerroviaController;
 import net.javaguides.springboot.controller.GrafoController;
 import net.javaguides.springboot.controller.KruskalController;
@@ -24,6 +25,7 @@ public class FerroviaApp {
         System.out.println("===== ESCOLHA O ALGORITMO =====");
         System.out.println("1 - Kruskal");
         System.out.println("2 - A*");
+        System.out.println("3 - A* Ferrovia");
         System.out.print("Opção: ");
 
         int opcao = scanner.nextInt();
@@ -34,6 +36,9 @@ public class FerroviaApp {
                 break;
             case 2:
                 executarAStar(grafo, scanner);
+                break;
+            case 3:
+                executarAStarFerrovia(grafo, scanner);
                 break;
             default:
                 System.out.println("Opção inválida. Encerrando o programa.");
@@ -131,5 +136,44 @@ public class FerroviaApp {
         System.out.println();
         System.out.println("Km total: " + km + " km");
         System.out.println("Custo: R$ " + custo);
+    }
+
+    public static void executarAStarFerrovia(Grafo grafo, Scanner scanner){
+        AStarFerroviaController aStar = new AStarFerroviaController();
+
+        System.out.println("===== ROTA A* FERROVIA =====");
+
+        for ( int i = 0; i< grafo.getCidades().size(); i++){
+            System.out.println(i+ "-" + grafo.getCidades().get(i).getNome());
+        }
+
+        System.out.println("Origem: ");
+        int indiceOrigem = scanner.nextInt();
+
+        System.out.println("Destino: ");
+        int indiceDestino = scanner.nextInt();
+
+        Cidade origem = grafo.getCidades().get(indiceOrigem);
+        Cidade destino = grafo.getCidades().get(indiceDestino);
+
+        List<Cidade> rota = aStar.buscarRota(grafo, origem, destino);
+
+        if (rota.isEmpty()){
+            System.out.println("Rota não encontrada!");
+            return;
+        }
+
+        double custo = aStar.calcularCusto(rota, grafo);
+
+        System.out.println("Melhor rota: ");
+
+        for (Cidade cidade: rota){
+            System.out.println(cidade.getNome());
+            if (!cidade.equals(rota.get(rota.size() - 1))){
+                System.out.println("->");
+            }
+        }
+        System.out.println();
+        System.out.println("Custo total: R$ "+ custo);
     }
 }

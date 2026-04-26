@@ -14,6 +14,9 @@ import net.javaguides.springboot.model.Cidade;
 import net.javaguides.springboot.model.Ferrovia;
 import net.javaguides.springboot.model.Grafo;
 import net.javaguides.springboot.model.Rodovia;
+import net.javaguides.springboot.controller.AlgoritimoGenericoController;
+
+
 
 public class FerroviaApp {
 
@@ -31,20 +34,20 @@ public class FerroviaApp {
 
         int opcao = scanner.nextInt();
 
-        switch (opcao) {
-            case 1:
-                executarKruskal(grafo);
-                break;
-            case 2:
-                executarAStar(grafo, scanner);
-                break;
-            case 3:
-                executarAStarFerrovia(grafo, scanner);
-                break;
-            default:
-                System.out.println("Opção inválida. Encerrando o programa.");
-                break;
-        }
+       switch (opcao) {
+    case 1:
+        executarKruskal(grafo);
+        break;
+    case 2:
+        executarAStar(grafo, scanner);
+        break;
+    case 3:
+        executarAStarFerrovia(grafo, scanner);
+        break;
+    default:
+        System.out.println("Opção inválida. Encerrando o programa.");
+        break;
+}
     }
 
     public static void executarKruskal(Grafo grafo) {
@@ -75,6 +78,7 @@ public class FerroviaApp {
         System.out.println("Total de conexões ferroviárias: " + ferrovias.size());
         System.out.println("Distância total das ferrovias: " + totalFerrovias + " km");
         System.out.println("Custo total da construção das ferrovias: R$" + ferroviaController.calcularCustoTotal(ferrovias));
+
 
         System.out.println("\n===== RODOVIAS (ARESTAS NÃO USADAS) =====");
         double totalRodovias = 0;
@@ -159,6 +163,7 @@ public class FerroviaApp {
 
         List<Cidade> rota = aStar.buscarRota(grafo, origem, destino);
 
+
         if (rota.isEmpty()){
             System.out.println("Rota não encontrada!");
             return;
@@ -174,7 +179,11 @@ public class FerroviaApp {
                 System.out.println("->");
             }
         }
-        System.out.println();
-        System.out.println("Custo total: R$ "+ custo);
+      
+      System.out.println();
+      System.out.println("Custo total: R$ " + custo);
+
     }
-}
+
+    
+

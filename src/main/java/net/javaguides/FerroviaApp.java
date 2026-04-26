@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+
 import net.javaguides.springboot.controller.AStarController;
 import net.javaguides.springboot.controller.AStarFerroviaController;
 import net.javaguides.springboot.controller.FerroviaController;
@@ -30,6 +31,7 @@ public class FerroviaApp {
         System.out.println("1 - Kruskal");
         System.out.println("2 - A*");
         System.out.println("3 - A* Ferrovia");
+        System.out.println("4 - Algoritmo Genetico");
         System.out.print("Opção: ");
 
         int opcao = scanner.nextInt();
@@ -43,6 +45,9 @@ public class FerroviaApp {
         break;
     case 3:
         executarAStarFerrovia(grafo, scanner);
+        break;
+    case 4:
+        executarAlgoritmoGenetico(grafo);
         break;
     default:
         System.out.println("Opção inválida. Encerrando o programa.");
@@ -179,11 +184,58 @@ public class FerroviaApp {
                 System.out.println("->");
             }
         }
-      
+    
       System.out.println();
       System.out.println("Custo total: R$ " + custo);
 
     }
+
+    public static void executarAlgoritmoGenetico(Grafo grafo) {
+        KruskalController kruskalController = new KruskalController();
+        ArrayList<Aresta> agm = new ArrayList<>(kruskalController.kruskal(grafo));
+
+        FerroviaController ferroviaController = new FerroviaController();
+        ArrayList<Ferrovia> ferrovias = ferroviaController.criarFerrovias(agm);
+
+        double custoTotal = ferroviaController.calcularCustoTotal(ferrovias);
+
+        double orcamento = custoTotal * 0.6;
+
+        System.out.println("\n===== ALGORITMO GENÉTICO =====");
+        System.out.println("Custo total (Kruskal): R$ " + custoTotal);
+        System.out.println("Orçamento disponível (60%): R$ " + orcamento);
+
+        AlgoritimoGenericoController ag = new AlgoritimoGenericoController();
+
+        List<Aresta> possiveis = grafo.getArestas();
+
+        List<Ferrovia> resultado = ag.otimizarFerrovias(possiveis, orcamento);
+
+        java.text.NumberFormat nf =
+            java.text.NumberFormat.getCurrencyInstance(new java.util.Locale("pt", "BR"));
+
+
+        System.out.println("\n===== RESULTADO =====");
+        
+        double custoFinal = 0;
+
+        for (Ferrovia f : resultado) {
+            Aresta a = f.getAresta();
+
+            System.out.println(
+              f.getAresta().getOrigem().getNome() + " <-> " +
+              a.getDestino().getNome() + " | " +
+              a.getDistancia() + " km"
+            );
+
+            custoFinal += a.getDistancia() * 2000000;
+        }
+
+        System.out.println("Quantidade de ferrovias: " + resultado.size());
+        System.out.println("Custo total da solução: " + nf.format(custoFinal));
+    }
+
+}
 
     
 

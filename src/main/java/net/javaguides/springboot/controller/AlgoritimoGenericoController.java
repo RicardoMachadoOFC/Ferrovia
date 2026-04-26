@@ -20,11 +20,11 @@ public class AlgoritimoGenericoController {
     }
 
     public List<Ferrovia> otimizarFerrovias(List<Aresta> possiveis, double orcamento) {
+
         GrafoController grafoController = new GrafoController();
         Grafo grafo = grafoController.criarGrafo();
 
-        AStarController aStar = new AStarController();
-
+        AStarFerroviaController aStar = new AStarFerroviaController();
         List<RotaCarga> rotas = criarRotas(grafoController);
 
         List<Individuo> populacao = criarPopulacao(10, possiveis.size());
@@ -35,8 +35,8 @@ public class AlgoritimoGenericoController {
 
             //1. Calcula fitness (Avaliação)
             for (Individuo ind : populacao) {
-                ind.fitness = calcularFitness(ind, possiveis, orcamento, grafo, aStar, rotas);;
-        }
+                ind.fitness = calcularFitness(ind, possiveis, orcamento, grafo, aStar, rotas);
+            }
 
             //2. Ordenar (melhores primeiro)
             ordenarPopulacao(populacao);
@@ -50,23 +50,28 @@ public class AlgoritimoGenericoController {
             //4. Reprodução, nova população (crossover + mutação)
             List<Individuo> novaPopulacao = new ArrayList<>();
 
-            while (novaPopulacao.size() < populacao.size()) {
+            //Utiliza Eliismo 
+            Individuo elite = new Individuo();
+            elite.genes = melhor.genes.clone();
+            elite.fitness = melhor.fitness;
+            novaPopulacao.add(elite);
 
+            while (novaPopulacao.size() < populacao.size()) {
                 Individuo pai1 = melhores.get((int) (Math.random() * melhores.size()));
                 Individuo pai2 = melhores.get((int) (Math.random() * melhores.size()));
 
                 Individuo filho = crossover(pai1, pai2);
                 mutar(filho);
 
-                novaPopulacao.add(filho);
-
+                novaPopulacao.add(filho);   
             }
-    
+        
             populacao = novaPopulacao;
 
             if (g % 10 == 0) {
                 System.out.println("Geração " + g + " concluída");
             }
+        
         }
 
         // Avaliação final (recalcula fitness da última geração)
@@ -105,7 +110,7 @@ public class AlgoritimoGenericoController {
 
         // Vai preencher o array de genes com valores aleatorios entre 0 ou 1
         for (int i = 0; i < tamanho; i++) {
-            ind.genes[i] = Math.random() < 0.02 ? 1 : 0;
+            ind.genes[i] = Math.random() < 0.1 ? 1 : 0;
         }
 
         return ind;
@@ -184,8 +189,7 @@ public class AlgoritimoGenericoController {
 
     //--Fitiness--
 
-    public double calcularFitness(Individuo ind, List<Aresta> possiveis, double orcamento, Grafo grafo, AStarController aStar, List<RotaCarga> rotas) {
-
+    public double calcularFitness(Individuo ind, List<Aresta> possiveis, double orcamento, Grafo grafo, AStarFerroviaController aStar, List<RotaCarga> rotas){
         double custoConstrucao = 0;
 
         //custo de contrução
@@ -193,6 +197,16 @@ public class AlgoritimoGenericoController {
             if (ind.genes[i] == 1) { // ferrovia contruida
                 custoConstrucao += possiveis.get(i).getDistancia() * 2000000;
             }
+        }
+        //penaliza solução sem nenhuma ferrovia
+        int totalFerrovias = 0;
+        for (int g : ind.genes){
+            if (g == 1) totalFerrovias++;
+        }
+        
+        //se não constroi nada solução invalida
+        if (totalFerrovias == 0) {
+            return -Double.MAX_VALUE;
         }
 
         //penalização de orçamento
@@ -203,24 +217,26 @@ public class AlgoritimoGenericoController {
 
         List<Aresta> ferrovias = obterArestasSelecionadas(ind, possiveis);
 
+        //Atualiza grafo
+        for (Aresta a : grafo.getArestas()) {
+            a.setFerrovia(false);
+        }
+
+        for (Aresta a : ferrovias) {
+            a.setFerrovia(true);
+        }
+
         double custoTotalTransporte = 0;
 
         for (RotaCarga rota : rotas) {
 
             List<Cidade> caminho = aStar.buscarRota(grafo, rota.getOrigem(), rota.getDestino());
-
             double custo = aStar.calcularCusto(caminho, grafo); 
-            
-            //simulação provisoria, até o A* estar adaptado
-            if (!ferrovias.isEmpty()) {
-                custo *= (1 - (ferrovias.size() * 0.01));
-            }
-
             custoTotalTransporte += custo * rota.getQuantidade();
         }
 
         //retorna negativo
-        return -(custoTotalTransporte + custoConstrucao);    
+        return -(custoTotalTransporte + custoConstrucao);  
   
     }
 
@@ -234,9 +250,7 @@ public class AlgoritimoGenericoController {
         rotas.add(new RotaCarga(grafoController.rioDeJaneiro, grafoController.beloHorizonte, 130));
         rotas.add(new RotaCarga(grafoController.saoPaulo, grafoController.recife, 120));
         rotas.add(new RotaCarga(grafoController.manaus, grafoController.saoPaulo, 110));
-
-
-    /*  rotas.add(new RotaCarga(grafoController.fortaleza, grafoController.saoPaulo, 100));
+        rotas.add(new RotaCarga(grafoController.fortaleza, grafoController.saoPaulo, 100));
         rotas.add(new RotaCarga(grafoController.portoAlegre, grafoController.brasilia, 90));
         rotas.add(new RotaCarga(grafoController.saoPaulo, grafoController.salvador, 90));
         rotas.add(new RotaCarga(grafoController.rioDeJaneiro, grafoController.salvador, 85));
@@ -281,7 +295,7 @@ public class AlgoritimoGenericoController {
         rotas.add(new RotaCarga(grafoController.aracaju, grafoController.rioDeJaneiro, 30 )); 
         rotas.add(new RotaCarga(grafoController.rioBranco, grafoController.saoPaulo, 25 )); 
         rotas.add(new RotaCarga(grafoController.boaVista, grafoController.brasilia, 20 )); 
-        /* */
+        
 
         return rotas;
     }

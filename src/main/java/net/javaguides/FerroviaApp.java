@@ -30,6 +30,7 @@ public class FerroviaApp {
         System.out.println("1 - Kruskal");
         System.out.println("2 - A*");
         System.out.println("3 - A* Ferrovia");
+        System.out.println("4 - A* Genético");
         System.out.print("Opção: ");
 
         int opcao = scanner.nextInt();
@@ -43,6 +44,9 @@ public class FerroviaApp {
         break;
     case 3:
         executarAStarFerrovia(grafo, scanner);
+        break;
+    case 4:
+        executarAStarGenetico(grafo, scanner);
         break;
     default:
         System.out.println("Opção inválida. Encerrando o programa.");
@@ -184,6 +188,70 @@ public class FerroviaApp {
       System.out.println("Custo total: R$ " + custo);
 
     }
+
+    public static void executarAStarGenetico(Grafo grafo, Scanner scanner) {
+
+    System.out.println("===== A* COM GENÉTICO =====");
+
+    AlgoritimoGenericoController genetico = new AlgoritimoGenericoController();
+
+    double orcamento = 1000000000; 
+
+    
+    List<Aresta> possiveis = grafo.getArestas();
+
+    
+    List<Ferrovia> ferrovias = genetico.otimizarFerrovias(possiveis, orcamento);
+
+    
+    for (Aresta a : grafo.getArestas()) {
+        a.setFerrovia(false);
+    }
+
+    
+    for (Ferrovia f : ferrovias) {
+        f.getAresta().setFerrovia(true);
+    }
+
+    
+    for (int i = 0; i < grafo.getCidades().size(); i++) {
+        System.out.println(i + " - " + grafo.getCidades().get(i).getNome());
+    }
+
+    System.out.print("Origem: ");
+    int indiceOrigem = scanner.nextInt();
+
+    System.out.print("Destino: ");
+    int indiceDestino = scanner.nextInt();
+
+    Cidade origem = grafo.getCidades().get(indiceOrigem);
+    Cidade destino = grafo.getCidades().get(indiceDestino);
+
+    
+    AStarFerroviaController aStar = new AStarFerroviaController();
+
+    List<Cidade> rota = aStar.buscarRota(grafo, origem, destino);
+
+    if (rota.isEmpty()) {
+        System.out.println("Rota não encontrada!");
+        return;
+    }
+
+    double custo = aStar.calcularCusto(rota, grafo);
+
+
+    System.out.println("Melhor rota:");
+
+    for (Cidade cidade : rota) {
+        System.out.print(cidade.getNome());
+        if (!cidade.equals(rota.get(rota.size() - 1))) {
+            System.out.print(" -> ");
+        }
+    }
+
+    System.out.println();
+    System.out.println("Custo total: R$ " + custo);
+}
 
     
 

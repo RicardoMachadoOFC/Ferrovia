@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./mvnw compile:*)",
+      "Bash(./mvnw spring-boot:run -q)",
+      "Bash(curl -s http://localhost:8080/cidades)",
+      "Bash(curl -s -X POST http://localhost:8080/rota/rodoviaria -H \"Content-Type: application/json\" -d '{\"origem\":\"SP\",\"destino\":\"RJ\"}')",
+      "Bash(curl -s http://localhost:8080/ferrovia/mst)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'Ferrovias: {len\\(d[\\\\\"ferrovias\\\\\"]\\)} arestas | Custo total: R\\\\$ {d[\\\\\"custoTotalReais\\\\\"]:,.2f}'\\)\")",
+      "Bash(node -e \"const d=require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\); const j=JSON.parse\\(d\\); console.log\\('Ferrovias:', j.ferrovias.length, 'arestas | Custo: R$', j.custoTotalReais.toLocaleString\\('pt-BR'\\)\\)\")",
+      "Bash(curl -s -X POST http://localhost:8080/rota/mista -H \"Content-Type: application/json\" -d '{\"origem\":\"SP\",\"destino\":\"AM\"}')",
+      "Bash(node -e \"const j=JSON.parse\\(require\\('fs'\\).readFileSync\\('/tmp/mst.json','utf8'\\)\\); console.log\\('Ferrovias MST:', j.ferrovias.length, 'arestas | Custo construção: R\\\\$', \\(j.custoTotalReais/1e9\\).toFixed\\(2\\)+'B'\\)\")",
+      "Bash(curl -s http://localhost:8080/ferrovia/mst -o \"C:/Users/felip/mst.json\")",
+      "Bash(node -e \"const j=JSON.parse\\(require\\('fs'\\).readFileSync\\('C:/Users/felip/mst.json','utf8'\\)\\); console.log\\('Ferrovias MST:', j.ferrovias.length, 'arestas | Custo construcao: R\\\\$', \\(j.custoTotalReais/1e9\\).toFixed\\(2\\)+'B'\\)\")",
+      "Bash(taskkill /F /IM java.exe)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/cidades)",
+      "Bash(node -e \"const p = require\\('./node_modules/@primer/react/package.json'\\); console.log\\('primer:', p.version\\); const s = require\\('./node_modules/styled-components/package.json'\\); console.log\\('styled-components:', s.version\\);\")",
+      "Bash(curl -s -X POST http://localhost:8080/rota/rodoviaria -H 'Content-Type: application/json' -d '{\"origem\":\"SP\",\"destino\":\"RJ\"}')",
+      "Bash(netstat -ano)",
+      "Bash(findstr \":8080\")",
+      "Bash(findstr \"LISTENING\")",
+      "Bash(taskkill /F /PID 38892)",
+      "Bash(taskkill //F //PID 38892)",
+      "Bash(xargs -I{} cmd //c \"taskkill //F //PID {}\")",
+      "Bash(taskkill //F //PID 19268)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('segmentos:', len\\(d['segmentos']\\), '| primeiro:', d['segmentos'][0]\\)\")"
+    ]
+  }
+}

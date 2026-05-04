@@ -64,3 +64,6 @@ Fitness:
 
 Custo logístico total das cargas
 Penalização se exceder orçamento
+
+
+Desenvolvido por: Ricardo Machado, Pietra Andrade, Ana Vitória, Bruno Souza e Stefani Pires

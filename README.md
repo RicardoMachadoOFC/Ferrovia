@@ -60,10 +60,10 @@ Ordenação por menor distância
 🔹 Algoritmo Genético
 Representação: vetor booleano (ferrovia construída ou não)
 
-Fitness:
+Para testar abra a pasta front e digite
 
-Custo logístico total das cargas
-Penalização se exceder orçamento
+NPM RUN DEV.
 
+e na pasta do backend .\mvnw spring-boot:run
 
 Desenvolvido por: Ricardo Machado, Pietra Andrade, Ana Vitória, Bruno Souza e Stefani Pires
